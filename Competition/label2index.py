@@ -174,11 +174,14 @@ trn_raw['License Type'] = trn_raw['License Type'].fillna(method='ffill')
 test_raw['License Type'] = test_raw['License Type'].fillna(method='ffill')
 trn_raw['Violation Time'] = trn_raw['Violation Time'].fillna(method='ffill')
 test_raw['Violation Time'] = test_raw['Violation Time'].fillna(method='ffill')
+trn_raw['Judgment Entry Date'] = trn_raw['Judgment Entry Date'].fillna("1/1/1996")
+test_raw['Judgment Entry Date'] = test_raw['Judgment Entry Date'].fillna("1/1/1996")
+
 
 subname1 = ['Payment Amount', 'Reduction Amount', 'Amount Due', 'Penalty Amount', 'Fine Amount', 'Interest Amount']
 subname2 = ['Violation', 'State', 'License Type', 'County', 'Issue Month', 'Issue Year', 'Summons Number']
-subname3 = ['Judge Year', 'Judge Month']
-name = np.hstack((subname1, subname2))
+subname3 = ['Judge Year','Judge Month', 'Plate']
+name = np.hstack((subname1, subname2,subname3))
 #subname1 = ['Payment Amount', 'Reduction Amount', 'Penalty Amount', 'Fine Amount', 'Interest Amount', 'Amount Due']
 #subname2 = ['State', 'License Type', 'Day of The Week', 'County', 'Violation']
 #name = np.hstack((subname1, subname2))
@@ -227,15 +230,23 @@ test_set['Issue Month'] = test_raw['Issue Date'].apply(lambda x: findMonth(x))
 trn_set['Issue Year'] = trn_raw['Issue Date'].apply(lambda x: findYear(x))
 test_set['Issue Year'] = test_raw['Issue Date'].apply(lambda x: findYear(x))
 
+# Judgment Entry Date --- Month
+trn_set['Judge Month'] = trn_raw['Judgment Entry Date'].apply(lambda x: findMonth(x))
+test_set['Judge Month'] = test_raw['Judgment Entry Date'].apply(lambda x: findMonth(x))
 
-#trn_set['Day of The Week'] = trn_set['Day of The Week'].map(labels_idx)
-#test_set['Day of The Week'] = test_raw['Issue Date'].apply(lambda x: dayofweek(x))
-#labels = np.unique(test_set['Day of The Week'] )
+# Judgment Entry Date --- Year
+trn_set['Judge Year'] = trn_raw['Judgment Entry Date'].apply(lambda x: findYear(x))
+test_set['Judge Year'] = test_raw['Judgment Entry Date'].apply(lambda x: findYear(x))
+
+'''
+trn_set['Day Judge'] = trn_raw['Judgment Entry Date'].apply(lambda x: findDayofWeek(x))
+day_labels = np.unique(trn_set['Day Judge'])
 #print(labels)
-#labels_idx = text2idx(labels, range(len(labels)))
-#test_set['Day of The Week'] = test_set['Day of The Week'].map(labels_idx)
-
-
+day_labels_idx = text2idx(day_labels, range(len(day_labels)))
+trn_set['Day Judge'] = trn_set['Day Judge'].map(day_labels_idx)
+test_set['Day Judge'] = test_raw['Judgment Entry Date'].apply(lambda x: findDayofWeek(x))
+test_set['Day Judge'] = test_set['Day Judge'].map(day_labels_idx)
+'''
 
 state_dict = topDict(trn_raw['State'], 10)
 trn_set['State'] = trn_raw['State'].apply(lambda x: text2frequency(state_dict, x))
@@ -276,6 +287,13 @@ trn_set['Violation'] = trn_raw['Violation'].map(violation_labels_idx_trn)
 violation_labels_test = np.unique(test_raw['Violation'])
 violation_labels_idx_test = text2idx(violation_labels_test, range(len(violation_labels_test)))
 test_set['Violation'] = test_raw['Violation'].map(violation_labels_idx_test)
+
+# Plate
+plate_dict = topDict(trn_raw['Plate'],10)
+#print(plate_dict)
+#print(trn_raw['Plate'].value_counts())
+trn_set['Plate'] = trn_raw['Plate'].apply(lambda x: text2frequency(plate_dict, x))
+test_set['Plate'] = test_raw['Plate'].apply(lambda x: text2frequency(plate_dict, x))
 
 
 # 'County Precinct'
