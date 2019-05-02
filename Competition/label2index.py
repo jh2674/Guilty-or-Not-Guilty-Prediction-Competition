@@ -2,12 +2,9 @@ import numpy as np
 import pandas as pd
 import re
 import datetime
+import math
 from collections import Counter
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import OneHotEncoder
-
 
 ## MAP TEXT DATA TO NUMBER
 def text2idx(text_list, idx_list):
@@ -138,14 +135,35 @@ def getMinute(text):
         hour = hour +1
     if m == "P":
         hour = hour % 12 + 12
-    round_time = minute
+    round_time = minute*60
     return round_time
 
-## LOAD DATA & PROCESS LABELS
+def time2cos(time,type):
+    if type == 1:   # hour
+        return math.cos(2*math.pi*time/24)
+    elif type == 2: # minute
+        return math.cos(2*math.pi*time/60)
+    elif type == 3: # month
+        return math.cos(2*math.pi*time/12)
+    else: # day of week
+        return math.cos(2*math.pi*time/7)
+
+def time2sin(time,type):
+    if type == 1:   # hour
+        return math.sin(2*math.pi*time/24)
+    elif type == 2: # minute
+        return math.sin(2*math.pi*time/60)
+    elif type == 3: # month
+        return math.sin(2*math.pi*time/12)
+    else: # day of week
+        return math.sin(2*math.pi*time/7)
+
+
+# LOAD DATA SET
 trn_raw = pd.read_csv('train.csv')
 test_raw = pd.read_csv('test.csv')
 
-## STATISTIC
+# STATISTIC ANALYSIS
 # print("--------------------------------------")
 # print("State", trn_raw['State'].value_counts())
 # print("--------------------------------------")
@@ -159,41 +177,34 @@ test_raw = pd.read_csv('test.csv')
 
 #print(len(trn_raw['State'].value_counts()))
 
-
-## DATA PREPROCESSING
-# raw data processing
+# DATA PREPROCESSING(FILL NAN)
 trn_raw['Violation'] = trn_raw['Violation'].fillna(method='ffill')
 test_raw['Violation'] = test_raw['Violation'].fillna(method='ffill')
 trn_raw['Issuing Agency'] = trn_raw['Issuing Agency'].fillna(method='ffill')
 test_raw['Issuing Agency'] = test_raw['Issuing Agency'].fillna(method='ffill')
-trn_raw['County'] = trn_raw['County'].fillna(method='ffill')
-test_raw['County'] = test_raw['County'].fillna(method='ffill')
+trn_raw['County'] = trn_raw['County'].fillna("UNKNOWN")
+test_raw['County'] = test_raw['County'].fillna("UNKNOWN")
 trn_raw['Precinct'] = trn_raw['Precinct'].fillna(method='ffill')
 test_raw['Precinct'] = test_raw['Precinct'].fillna(method='ffill')
 trn_raw['License Type'] = trn_raw['License Type'].fillna(method='ffill')
 test_raw['License Type'] = test_raw['License Type'].fillna(method='ffill')
 trn_raw['Violation Time'] = trn_raw['Violation Time'].fillna(method='ffill')
 test_raw['Violation Time'] = test_raw['Violation Time'].fillna(method='ffill')
-trn_raw['Judgment Entry Date'] = trn_raw['Judgment Entry Date'].fillna("1/1/1996")
-test_raw['Judgment Entry Date'] = test_raw['Judgment Entry Date'].fillna("1/1/1996")
+trn_raw['Judgment Entry Date'] = trn_raw['Judgment Entry Date'].fillna("1/1/1000")
+test_raw['Judgment Entry Date'] = test_raw['Judgment Entry Date'].fillna("1/1/1000")
 
-
+# COLUMN NAME
 subname1 = ['Payment Amount', 'Reduction Amount', 'Amount Due', 'Penalty Amount', 'Fine Amount', 'Interest Amount']
-subname2 = ['Violation', 'State', 'License Type', 'County', 'Issue Month', 'Issue Year', 'Summons Number']
-subname3 = ['Judge Year','Judge Month', 'Plate']
-name = np.hstack((subname1, subname2,subname3))
-#subname1 = ['Payment Amount', 'Reduction Amount', 'Penalty Amount', 'Fine Amount', 'Interest Amount', 'Amount Due']
-#subname2 = ['State', 'License Type', 'Day of The Week', 'County', 'Violation']
-#name = np.hstack((subname1, subname2))
+subname2 = ['Violation', 'State', 'License Type', 'County', 'Issue Month Cos', 'Issue Month Sin', 'Issue Year', 'Summons Number']
+subname3 = ['Judge Year', 'Judge Month Cos', 'Judge Month Sin', 'Plate', 'Issuing Agency']
+name = np.hstack((subname1, subname2, subname3))
 
-
-# empty training set
+# CREATE EMPTY TRAINING & TESTING SET
 trn_set = pd.DataFrame(columns=name)
-# empty testing set
 test_set = pd.DataFrame(columns=name)
 
-# fill with feature vectors
-# Money & Summons Number
+# FEATURES EXTRACTION
+# FEATURE CATEGORY 1: Money & Summons Number
 trn_set['Payment Amount'] = trn_raw['Payment Amount']
 test_set['Payment Amount'] = test_raw['Payment Amount']
 trn_set['Reduction Amount'] = trn_raw['Reduction Amount']
@@ -209,122 +220,121 @@ test_set['Amount Due'] = test_raw['Amount Due']
 trn_set['Summons Number'] = trn_raw['Summons Number']
 test_set['Summons Number'] = test_raw['Summons Number']
 
-# License Type
-license_type = np.unique(trn_raw['License Type'])
+#  FEATURE CATEGORY 2: License Type
+license_type = np.unique(pd.concat([trn_raw['License Type'], test_raw['License Type']], ignore_index=True))
 license_type_idx = text2idx(license_type, range(len(license_type)))
 trn_set['License Type'] = trn_raw['License Type'].map(license_type_idx)
-license_type = np.unique(test_raw['License Type'])
-license_type_idx = text2idx(license_type, range(len(license_type)))
 test_set['License Type'] = test_raw['License Type'].map(license_type_idx)
-'''
-licensetype_dict = topdict(trn_raw['License Type'], 5)
-trn_set['License Type'] = trn_raw['License Type'].apply(lambda x: text2frequency(licensetype_dict, x))
-test_set['License Type'] = test_raw['License Type'].apply(lambda x: text2frequency(licensetype_dict, x))
-'''
 
-# Issue Date --- Month
-trn_set['Issue Month'] = trn_raw['Issue Date'].apply(lambda x: findMonth(x))
-test_set['Issue Month'] = test_raw['Issue Date'].apply(lambda x: findMonth(x))
-
-# Issue Date --- Year
+# FEATURE CATEGORY 3: Issue Date & Judgment Entry Date (Year & Month)
 trn_set['Issue Year'] = trn_raw['Issue Date'].apply(lambda x: findYear(x))
 test_set['Issue Year'] = test_raw['Issue Date'].apply(lambda x: findYear(x))
+#trn_set['Issue Month'] = trn_raw['Issue Date'].apply(lambda x: findMonth(x))
+#test_set['Issue Month'] = test_raw['Issue Date'].apply(lambda x: findMonth(x))
+issuemonth_set_trn = trn_raw['Issue Date'].apply(lambda x: findMonth(x))
+trn_set['Issue Month Cos'] = issuemonth_set_trn.apply(lambda x: time2cos(x, 3))
+trn_set['Issue Month Sin'] = issuemonth_set_trn.apply(lambda x: time2sin(x, 3))
+issuemonth_set_test = test_raw['Issue Date'].apply(lambda x: findMonth(x))
+test_set['Issue Month Cos'] = issuemonth_set_test.apply(lambda x: time2cos(x, 3))
+test_set['Issue Month Sin'] = issuemonth_set_test.apply(lambda x: time2sin(x, 3))
+#trn_set['Issue Day'] = trn_raw['Issue Date'].apply(lambda x: findDay(x))
+#test_set['Issue Day'] = test_raw['Issue Date'].apply(lambda x: findDay(x))
 
-# Judgment Entry Date --- Month
-trn_set['Judge Month'] = trn_raw['Judgment Entry Date'].apply(lambda x: findMonth(x))
-test_set['Judge Month'] = test_raw['Judgment Entry Date'].apply(lambda x: findMonth(x))
 
-# Judgment Entry Date --- Year
 trn_set['Judge Year'] = trn_raw['Judgment Entry Date'].apply(lambda x: findYear(x))
 test_set['Judge Year'] = test_raw['Judgment Entry Date'].apply(lambda x: findYear(x))
-
-'''
-trn_set['Day Judge'] = trn_raw['Judgment Entry Date'].apply(lambda x: findDayofWeek(x))
-day_labels = np.unique(trn_set['Day Judge'])
-#print(labels)
-day_labels_idx = text2idx(day_labels, range(len(day_labels)))
-trn_set['Day Judge'] = trn_set['Day Judge'].map(day_labels_idx)
-test_set['Day Judge'] = test_raw['Judgment Entry Date'].apply(lambda x: findDayofWeek(x))
-test_set['Day Judge'] = test_set['Day Judge'].map(day_labels_idx)
-'''
-
-state_dict = topDict(trn_raw['State'], 10)
-trn_set['State'] = trn_raw['State'].apply(lambda x: text2frequency(state_dict, x))
-test_set['State'] = test_raw['State'].apply(lambda x: text2frequency(state_dict, x))
-'''
-# State
-labels = np.unique(trn_raw['State'])
-labels_idx = text2idx(labels, range(len(labels)))
-trn_set['State'] = trn_raw['State'].map(labels_idx)
-labels = np.unique(test_raw['State'])
-labels_idx = text2idx(labels, range(len(labels)))
-test_set['State'] = test_raw['State'].map(labels_idx)
-'''
-# County
-county_dict = topDict(trn_raw['County'], 10)
-trn_set['County'] = trn_raw['County'].apply(lambda x: text2frequency(county_dict, x))
-test_set['County'] = test_raw['County'].apply(lambda x: text2frequency(county_dict, x))
-'''
-labels_1 = np.unique(trn_set['County'] )
-labels_idx_1 = text2idx(labels_1, range(len(labels_1)))
-trn_set['County'] = trn_set['County'].map(labels_idx_1)
-#labels1 = np.unique(test_set['County'] )
-#labels_idx_1 = text2idx(labels, range(len(labels)))
-test_set['County'] = test_set['County'].map(labels_idx_1)
-'''
-'''
-agency_labels_trn = np.unique(trn_raw['Issuing Agency'])
-violation_labels_idx_trn = text2idx(agency_labels_trn, range(len(agency_labels_trn)))
-trn_set['Issuing Agency'] = trn_raw['Issuing Agency'].map(violation_labels_idx_trn)
-agency_labels_test = np.unique(test_raw['Issuing Agency'])
-violation_labels_idx_test = text2idx(agency_labels_test, range(len(agency_labels_test)))
-test_set['Issuing Agency'] = test_raw['Issuing Agency'].map(violation_labels_idx_test)
-'''
-# Violation
-violation_labels_trn = np.unique(trn_raw['Violation'])
-violation_labels_idx_trn = text2idx(violation_labels_trn, range(len(violation_labels_trn)))
-trn_set['Violation'] = trn_raw['Violation'].map(violation_labels_idx_trn)
-violation_labels_test = np.unique(test_raw['Violation'])
-violation_labels_idx_test = text2idx(violation_labels_test, range(len(violation_labels_test)))
-test_set['Violation'] = test_raw['Violation'].map(violation_labels_idx_test)
-
-# Plate
-plate_dict = topDict(trn_raw['Plate'],10)
-#print(plate_dict)
-#print(trn_raw['Plate'].value_counts())
-trn_set['Plate'] = trn_raw['Plate'].apply(lambda x: text2frequency(plate_dict, x))
-test_set['Plate'] = test_raw['Plate'].apply(lambda x: text2frequency(plate_dict, x))
+#trn_set['Judge Month'] = trn_raw['Judgment Entry Date'].apply(lambda x: findMonth(x))
+#test_set['Judge Month'] = test_raw['Judgment Entry Date'].apply(lambda x: findMonth(x))
+judgemonth_set_trn = trn_raw['Judgment Entry Date'].apply(lambda x: findMonth(x))
+trn_set['Judge Month Cos'] = judgemonth_set_trn.apply(lambda x: time2cos(x, 3))
+trn_set['Judge Month Sin'] = judgemonth_set_trn.apply(lambda x: time2sin(x, 3))
+judgemonth_set_test = test_raw['Judgment Entry Date'].apply(lambda x: findMonth(x))
+test_set['Judge Month Cos'] = judgemonth_set_test.apply(lambda x: time2cos(x, 3))
+test_set['Judge Month Sin'] = judgemonth_set_test.apply(lambda x: time2sin(x, 3))
+#trn_set['Judge Day'] = trn_raw['Judgment Entry Date'].apply(lambda x: findDay(x))
+#test_set['Judge Day'] = test_raw['Judgment Entry Date'].apply(lambda x: findDay(x))
 
 
-# 'County Precinct'
+# FEATURE CATEGORY 4: State & County
+state_labels = np.unique(pd.concat([trn_raw['State'], test_raw['State']], ignore_index=True))
+state_idx = text2idx(state_labels, range(len(state_labels)))
+trn_set['State'] = trn_raw['State'].map(state_idx)
+test_set['State'] = test_raw['State'].map(state_idx)
+
+county_labels = np.unique(pd.concat([trn_raw['County'], test_raw['County']], ignore_index=True))
+county_idx = text2idx(county_labels, range(len(county_labels)))
+trn_set['County'] = trn_raw['County'].map(county_idx)
+test_set['County'] = test_raw['County'].map(county_idx)
+
+# FEATURE CATEGORY 4: Issue Agency
+agency_labels = np.unique(pd.concat([trn_raw['Issuing Agency'], test_raw['Issuing Agency']], ignore_index=True))
+agency_idx = text2idx(agency_labels, range(len(agency_labels)))
+trn_set['Issuing Agency'] = trn_raw['Issuing Agency'].map(agency_idx)
+test_set['Issuing Agency'] = test_raw['Issuing Agency'].map(agency_idx)
+
+
+# FEATURE CATEGORY 5: Violation
+violation_labels = np.unique(pd.concat([trn_raw['Violation'],test_raw['Violation']],ignore_index=True))
+violation_labels_idx = text2idx(violation_labels, range(len(violation_labels)))
+trn_set['Violation'] = trn_raw['Violation'].map(violation_labels_idx)
+test_set['Violation'] = test_raw['Violation'].map(violation_labels_idx)
+
+# FEATURE CATEGORY 6: Plate
+labels_trn = np.unique(trn_raw['Plate'])
+plate_dict_trn = topDict(trn_raw['Plate'],labels_trn.shape[0])
+trn_set['Plate'] = trn_raw['Plate'].apply(lambda x: text2frequency(plate_dict_trn, x))
+labels_test = np.unique(test_raw['Plate'])
+plate_dict_test = topDict(test_raw['Plate'],labels_test.shape[0])
+test_set['Plate'] = test_raw['Plate'].apply(lambda x: text2frequency(plate_dict_test, x))
+
+
+def findHourPeriod(hour):
+    if hour >= 0 and hour < 4:
+        return 0
+    elif hour >= 4 and hour < 8:
+        return 1
+    elif hour >= 8 and hour < 12:
+        return 2
+    elif hour >= 12 and hour < 16:
+        return 3
+    elif hour >= 16 and hour < 20:
+        return 4
+    else:
+        return 5
+
+def findMinutePeriod(minute):
+    if minute >= 0 and minute < 20:
+        return 0
+    elif minute >= 20 and minute < 40:
+        return 1
+    else:
+        return 2
+    '''
+    elif minute >= 30 and minute < 40:
+        return 3
+    elif minute >= 40 and minute < 50:
+        return 4
+    else:
+        return 5
+    '''
 
 '''
-## ONE HOT ENCODE
-def text2onehot(list):
-    label_encoder = LabelEncoder()
-    integer_encoded = label_encoder.fit_transform(list)
-    onehot_encoder = OneHotEncoder(categories='auto', sparse=False)
-    integer_encoded = integer_encoded.reshape(len(integer_encoded), 1)
-    onehot_encoded = onehot_encoder.fit_transform(integer_encoded)
-    return onehot_encoded
-
-county_num_trn = len(trn_raw['County'].unique())
-precinct_num_trn = len(trn_raw['Precinct'].unique())
-#np.savetxt('ptrn.csv', trn_raw['Precinct'].unique(), delimiter=",")
-county_df_trn = pd.DataFrame(text2onehot(trn_raw['County']), columns=createName('County', county_num_trn))
-precinct_df_trn = pd.DataFrame(text2onehot(trn_raw['Precinct']), columns=createName('Precinct', precinct_num_trn))
-trn_set = pd.concat([trn_set, county_df_trn,precinct_df_trn], axis=1)
-print(trn_set.shape)
-
-county_num_test = len(test_raw['County'].unique())
-precinct_num_test = len(test_raw['Precinct'].unique())
-#np.savetxt('ptest.csv', test_raw['Precinct'].unique(), delimiter=",")
-county_df_test = pd.DataFrame(text2onehot(test_raw['County']), columns=createName('County', county_num_test))
-precinct_df_test = pd.DataFrame(text2onehot(test_raw['Precinct']), columns=createName('Precinct', precinct_num_test))
-test_set = pd.concat([test_set, county_df_test, precinct_df_test], axis=1)
-print(test_set.shape)
+# FEATURE CATEGORY 7: Violation Time(Hour Period)
+#trn_set['Hour Period'] = trn_raw['Violation Time'].apply(lambda x: getHour(x))
+#trn_set['Hour Period'] = trn_set['Hour Period'].apply(lambda x: findHourPeriod(x))
+#test_set['Hour Period'] = test_raw['Violation Time'].apply(lambda x: getHour(x))
+#test_set['Hour Period'] = test_set['Hour Period'].apply(lambda x: findHourPeriod(x))
+minute_set_trn = trn_raw['Violation Time'].apply(lambda x: getMinute(x))
+trn_set['Minute Cos'] = minute_set_trn.apply(lambda x: time2cos(x, 2))
+trn_set['Minute Sin'] = minute_set_trn.apply(lambda x: time2sin(x, 2))
+#trn_set['Minute Period'] = trn_set['Minute Period'].apply(lambda x: findMinutePeriod(x))
+minute_set_test = test_raw['Violation Time'].apply(lambda x: getMinute(x))
+test_set['Minute Cos'] = minute_set_test.apply(lambda x: time2cos(x, 2))
+test_set['Minute Sin'] = minute_set_test.apply(lambda x: time2sin(x, 2))
+#test_set['Minute Period'] = test_set['Minute Period'].apply(lambda x: findMinutePeriod(x))
 '''
 
+# LABLE PROCESSING
 labels = np.unique(trn_raw['Violation Status'])
 labels_idx = text2idx(labels, range(len(labels)))
 y_trn = trn_raw['Violation Status'].map(labels_idx)
@@ -334,7 +344,7 @@ X_test = test_set
 
 ## RANDOMFOREST MODEL
 n_estimators = 1000
-rf = RandomForestClassifier(n_estimators=n_estimators, max_depth=15, oob_score=True, n_jobs=-1)
+rf = RandomForestClassifier(n_estimators=n_estimators, criterion='entropy', max_depth=15, oob_score=True, n_jobs=-1)
 rf_model = rf.fit(X_trn, y_trn)
 y_pred = rf_model.predict(X_test)
 print("Training Score:", rf.oob_score_)
@@ -355,4 +365,3 @@ y_set = pd.DataFrame(columns=name)
 y_set['ID'] = id
 y_set['Prediction'] = set
 y_set.to_csv('sub2.csv', encoding='gbk')
-
