@@ -163,10 +163,35 @@ def time2sin(time,type):
 trn_raw = pd.read_csv('train.csv')
 test_raw = pd.read_csv('test.csv')
 
+#trn_raw['Violation'].value_counts().to_csv('violation_trn.csv', encoding='gbk')
+#test_raw['Violation'].value_counts().to_csv('violation_test.csv', encoding='gbk')
+
+'''
 # STATISTIC ANALYSIS
-# print("--------------------------------------")
-# print("State", trn_raw['State'].value_counts())
-# print("--------------------------------------")
+print("--------------------------------------")
+violation_set =pd.concat([trn_raw['Violation'],test_raw['Violation']],ignore_index=True)
+print(violation_set.value_counts())
+
+print(trn_raw.shape)
+
+row_copy_1 = trn_raw[trn_raw['Violation'] == 'ANGLE PARKING-COMM VEHICLE'] # 1
+row_copy_2 = trn_raw[trn_raw['Violation'] == 'DIVIDED HIGHWAY '] # 3
+row_copy_3 = trn_raw[trn_raw['Violation'] == 'ELEVATED/DIVIDED HIGHWAY/TUNNL'] # 1
+row_copy_4 = trn_raw[trn_raw['Violation'] == 'NO OPERATOR NAM/ADD/PH DISPLAY'] # 4
+row_copy_5 = trn_raw[trn_raw['Violation'] == 'NO STANDING EXCP DP'] # 1
+row_copy_6 = trn_raw[trn_raw['Violation'] == 'WASH/REPAIR VEHCL-REPAIR ONLY'] #1
+row_copy_7 = trn_raw[trn_raw['Violation'] == 'OT PARKING-MISSING/BROKEN METR'] #2
+row_copy_8 = trn_raw[trn_raw['Violation'] == 'EXPIRED METER']
+row_copy_9 = trn_raw[trn_raw['Violation'] == 'OVERNIGHT TRACTOR TRAILER PKG']
+row_copy_10 = trn_raw[trn_raw['Violation'] == 'EXCAVATION-VEHICLE OBSTR TRAFF']
+row_copy_11 = trn_raw[trn_raw['Violation'] == 'NO PARKING-EXC. HNDICAP PERMIT']
+row_copy_12 = trn_raw[trn_raw['Violation'] == 'NO STOP/STANDNG EXCEPT PAS P/U']
+row_copy_13 = trn_raw[trn_raw['Violation'] == 'VEHICLE FOR SALE(DEALERS ONLY)']
+violation_rows_copy = pd.concat([row_copy_1, row_copy_3, row_copy_5, row_copy_6], ignore_index=True)
+print(violation_rows_copy)
+trn_raw = pd.concat([trn_raw,violation_rows_copy], ignore_index=True)
+
+print("--------------------------------------")
 # print("License Type", trn_raw['License Type'].value_counts())
 # print("--------------------------------------")
 # print("County", trn_raw['County'].value_counts())
@@ -174,8 +199,16 @@ test_raw = pd.read_csv('test.csv')
 # print("Precinct", trn_raw['Precinct'].value_counts())
 # print("--------------------------------------")
 # trn_raw['Precinct'].value_counts().to_csv('precinct.csv', encoding='gbk')
-
 #print(len(trn_raw['State'].value_counts()))
+'''
+print(trn_raw['Violation Status'].value_counts())
+rows_copy1 = trn_raw[trn_raw['Violation Status'] == 'APPEAL MODIFIED']
+rows_copy2 = trn_raw[trn_raw['Violation Status'] == 'HEARING WAIVED']
+rows_copy = pd.concat([rows_copy1,rows_copy2],ignore_index=True)
+trn_raw = pd.concat([trn_raw, rows_copy, rows_copy, rows_copy, rows_copy, rows_copy], ignore_index=True)
+print(trn_raw.shape)
+#print(trn_raw['Violation Status'].value_counts())
+
 
 # DATA PREPROCESSING(FILL NAN)
 trn_raw['Violation'] = trn_raw['Violation'].fillna(method='ffill')
@@ -192,6 +225,8 @@ trn_raw['Violation Time'] = trn_raw['Violation Time'].fillna(method='ffill')
 test_raw['Violation Time'] = test_raw['Violation Time'].fillna(method='ffill')
 trn_raw['Judgment Entry Date'] = trn_raw['Judgment Entry Date'].fillna("1/1/1000")
 test_raw['Judgment Entry Date'] = test_raw['Judgment Entry Date'].fillna("1/1/1000")
+
+#trn_raw = trn_raw[trn_raw['Violation'] != 'VACANT LOT']
 
 # COLUMN NAME
 subname1 = ['Payment Amount', 'Reduction Amount', 'Amount Due', 'Penalty Amount', 'Fine Amount', 'Interest Amount']
@@ -219,6 +254,8 @@ trn_set['Amount Due'] = trn_raw['Amount Due']
 test_set['Amount Due'] = test_raw['Amount Due']
 trn_set['Summons Number'] = trn_raw['Summons Number']
 test_set['Summons Number'] = test_raw['Summons Number']
+#trn_set['Precinct'] = trn_raw['Precinct']
+#test_set['Precinct'] = test_raw['Precinct']
 
 #  FEATURE CATEGORY 2: License Type
 license_type = np.unique(pd.concat([trn_raw['License Type'], test_raw['License Type']], ignore_index=True))
@@ -251,8 +288,8 @@ trn_set['Judge Month Sin'] = judgemonth_set_trn.apply(lambda x: time2sin(x, 3))
 judgemonth_set_test = test_raw['Judgment Entry Date'].apply(lambda x: findMonth(x))
 test_set['Judge Month Cos'] = judgemonth_set_test.apply(lambda x: time2cos(x, 3))
 test_set['Judge Month Sin'] = judgemonth_set_test.apply(lambda x: time2sin(x, 3))
-#trn_set['Judge Day'] = trn_raw['Judgment Entry Date'].apply(lambda x: findDay(x))
-#test_set['Judge Day'] = test_raw['Judgment Entry Date'].apply(lambda x: findDay(x))
+trn_set['Judge Day'] = trn_raw['Judgment Entry Date'].apply(lambda x: findDay(x))
+test_set['Judge Day'] = test_raw['Judgment Entry Date'].apply(lambda x: findDay(x))
 
 
 # FEATURE CATEGORY 4: State & County
@@ -344,7 +381,7 @@ X_test = test_set
 
 ## RANDOMFOREST MODEL
 n_estimators = 1000
-rf = RandomForestClassifier(n_estimators=n_estimators, criterion='entropy', max_depth=15, oob_score=True, n_jobs=-1)
+rf = RandomForestClassifier(n_estimators=n_estimators, criterion='entropy', max_depth=15, oob_score=True, n_jobs=-1, max_features='sqrt')
 rf_model = rf.fit(X_trn, y_trn)
 y_pred = rf_model.predict(X_test)
 print("Training Score:", rf.oob_score_)
