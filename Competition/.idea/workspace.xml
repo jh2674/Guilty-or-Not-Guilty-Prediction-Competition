@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="862abed2-9492-4b0f-87b1-4849201213b8" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/label2index85685.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/label2index85688.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/label2index85791.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/label2index85_724.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/label2index.py" beforeDir="false" afterPath="$PROJECT_DIR$/label2index.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sub2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/sub2.csv" afterDir="false" />
@@ -18,8 +20,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/label2index.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="434">
-              <caret line="331" column="16" lean-forward="true" selection-start-line="331" selection-start-column="16" selection-end-line="331" selection-end-column="16" />
+            <state relative-caret-position="532">
+              <caret line="273" column="81" selection-start-line="273" selection-start-column="81" selection-end-line="273" selection-end-column="81" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -48,10 +50,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="689" />
-    <option name="y" value="-1088" />
-    <option name="width" value="2576" />
-    <option name="height" value="1035" />
+    <option name="x" value="1283" />
+    <option name="y" value="-1122" />
+    <option name="width" value="1030" />
+    <option name="height" value="414" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -59,6 +61,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -70,7 +73,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -138,14 +140,14 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="689" y="-1088" width="2576" height="1035" extended-state="6" />
+    <frame x="995" y="-1088" width="1936" height="1035" extended-state="6" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.069428004" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.13350923" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32913166" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49940827" weight="0.25027934" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49940827" weight="0.25810057" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39664805" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -232,10 +234,21 @@
     <entry file="file://$PROJECT_DIR$/label2index85685.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/label2index85688.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/label2index85_724.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/label2index85791.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4503" />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/label2index.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="434">
-          <caret line="331" column="16" lean-forward="true" selection-start-line="331" selection-start-column="16" selection-end-line="331" selection-end-column="16" />
+        <state relative-caret-position="532">
+          <caret line="273" column="81" selection-start-line="273" selection-start-column="81" selection-end-line="273" selection-end-column="81" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
