@@ -2,12 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="862abed2-9492-4b0f-87b1-4849201213b8" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/label2index85688.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/label2index85791.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/label2index85_724.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/train.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/label2index.py" beforeDir="false" afterPath="$PROJECT_DIR$/label2index.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sub2.csv" beforeDir="false" afterPath="$PROJECT_DIR$/sub2.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/trnNpred_85791.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/trnNpred_85791.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,10 +16,10 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/label2index.py">
+        <entry file="file://$PROJECT_DIR$/code/trnNpred_85791.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="532">
-              <caret line="273" column="81" selection-start-line="273" selection-start-column="81" selection-end-line="273" selection-end-column="81" />
+            <state relative-caret-position="3895">
+              <caret line="379" column="48" selection-start-line="379" selection-start-column="48" selection-end-line="379" selection-end-column="48" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -46,14 +44,14 @@
       <list>
         <option value="$PROJECT_DIR$/competition.py" />
         <option value="$PROJECT_DIR$/label2index.py" />
+        <option value="$PROJECT_DIR$/code/trnNpred_85791.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1283" />
-    <option name="y" value="-1122" />
-    <option name="width" value="1030" />
-    <option name="height" value="414" />
+    <option name="x" value="-15" />
+    <option name="width" value="2573" />
+    <option name="height" value="1010" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -69,6 +67,11 @@
               <item name="Competition" type="b2602c69:ProjectViewProjectNode" />
               <item name="Competition" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="Competition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Competition" type="462c0819:PsiDirectoryNode" />
+              <item name="code" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -77,11 +80,12 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/code/trnNpred_85791.py" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PythonContentEntriesConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Users\Jie Huang\Documents\GitHub\Guilty-or-Not-Guilty-Prediction-Competition-\Competition\code" />
       <recent name="D:\Users\Jie Huang\Documents\GitHub\Guilty-or-Not-Guilty-Prediction-Competition-\Competition" />
       <recent name="C:\Users\Jie Huang\Desktop\Competition" />
     </key>
@@ -99,7 +103,7 @@
     </option>
   </component>
   <component name="RunManager">
-    <configuration name="label2index" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="trnNpred_85791" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Competition" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -107,11 +111,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/code" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/label2index.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/code/trnNpred_85791.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -122,7 +126,7 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.label2index" />
+        <item itemvalue="Python.trnNpred_85791" />
       </list>
     </recent_temporary>
   </component>
@@ -140,14 +144,14 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="995" y="-1088" width="1936" height="1035" extended-state="6" />
+    <frame x="-6" y="-6" width="1549" height="846" extended-state="6" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.13350923" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16732804" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32913166" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49940827" weight="0.25810057" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49940827" weight="0.2577465" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39664805" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -247,8 +251,34 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/label2index.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="532">
+        <state relative-caret-position="74">
           <caret line="273" column="81" selection-start-line="273" selection-start-column="81" selection-end-line="273" selection-end-column="81" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/code/train.csv">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Competition.ipynb">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/trnNpred_85791.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="16" column="53" lean-forward="true" selection-start-line="16" selection-start-column="53" selection-end-line="16" selection-end-column="53" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/code/trnNpred_85791.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3895">
+          <caret line="379" column="48" selection-start-line="379" selection-start-column="48" selection-end-line="379" selection-end-column="48" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>

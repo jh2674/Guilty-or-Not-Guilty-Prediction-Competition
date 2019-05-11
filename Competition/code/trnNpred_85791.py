@@ -201,12 +201,12 @@ print("--------------------------------------")
 # trn_raw['Precinct'].value_counts().to_csv('precinct.csv', encoding='gbk')
 #print(len(trn_raw['State'].value_counts()))
 '''
-print(trn_raw['Violation Status'].value_counts())
+#print(trn_raw['Violation Status'].value_counts())
 rows_copy1 = trn_raw[trn_raw['Violation Status'] == 'APPEAL MODIFIED']
 rows_copy2 = trn_raw[trn_raw['Violation Status'] == 'HEARING WAIVED']
 rows_copy = pd.concat([rows_copy1,rows_copy2],ignore_index=True)
 trn_raw = pd.concat([trn_raw, rows_copy, rows_copy, rows_copy, rows_copy, rows_copy], ignore_index=True)
-print(trn_raw.shape)
+#print(trn_raw.shape)
 #print(trn_raw['Violation Status'].value_counts())
 
 
@@ -269,6 +269,7 @@ test_set['Interest VS Reduction'] = test_raw['Interest Amount'] - test_raw['Redu
 #test_set['Precinct'] = test_raw['Precinct']
 
 #  FEATURE CATEGORY 2: License Type
+#print(pd.concat([trn_raw['License Type'], test_raw['License Type']], ignore_index=True).value_counts())
 license_type = np.unique(pd.concat([trn_raw['License Type'], test_raw['License Type']], ignore_index=True))
 license_type_idx = text2idx(license_type, range(len(license_type)))
 trn_set['License Type'] = trn_raw['License Type'].map(license_type_idx)
